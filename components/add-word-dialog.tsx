@@ -13,7 +13,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Plus, Loader2 } from "lucide-react";
 import { addWord } from "@/app/actions";
 import { toast } from "sonner";
@@ -59,7 +58,7 @@ export function AddWordDialog() {
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="wort">Walliserwort *</Label>
+              <Label htmlFor="wort">Walliserwort</Label>
               <Input
                 id="wort"
                 name="wort"
@@ -69,29 +68,12 @@ export function AddWordDialog() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="hochdeutsch">Hochdeutsch *</Label>
+              <Label htmlFor="bedeutung">Bedeutung</Label>
               <Input
-                id="hochdeutsch"
-                name="hochdeutsch"
+                id="bedeutung"
+                name="bedeutung"
                 required
                 placeholder="z.B. wandern"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="beispielsatz">Beispielsatz</Label>
-              <Textarea
-                id="beispielsatz"
-                name="beispielsatz"
-                placeholder="z.B. Mier ggomar tschifolo gan"
-                rows={2}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="region">Region</Label>
-              <Input
-                id="region"
-                name="region"
-                placeholder="z.B. Visp, Saastal, Goms..."
               />
             </div>
           </div>

@@ -1,11 +1,17 @@
 export type Word = {
   id: string;
   wort: string;
-  hochdeutsch: string;
-  beispielsatz: string | null;
-  region: string | null;
+  bedeutung: string;
   added_by: string;
+  user_id: string | null;
   created_at: string;
+  updated_at: string;
 };
 
-export type NewWord = Omit<Word, "id" | "created_at" | "added_by">;
+export type Profile = {
+  id: string;
+  display_name: string;
+  avatar_url: string | null;
+  created_at: string;
+  updated_at: string;
+};

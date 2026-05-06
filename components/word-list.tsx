@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { Word } from "@/lib/types";
 import { Input } from "@/components/ui/input";
 import { WordCard } from "@/components/word-card";
@@ -13,7 +14,24 @@ export function WordList({
   words: Word[];
   canEdit: boolean;
 }) {
-  const [query, setQuery] = useState("");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const initial = searchParams.get("q") ?? "";
+  const [query, setQuery] = useState(initial);
+
+  // Sync query → URL with light debounce so refresh keeps the filter.
+  useEffect(() => {
+    const id = setTimeout(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      const trimmed = query.trim();
+      if (trimmed) params.set("q", trimmed);
+      else params.delete("q");
+      const next = params.toString();
+      router.replace(next ? `/?${next}` : "/", { scroll: false });
+    }, 200);
+    return () => clearTimeout(id);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [query]);
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
@@ -21,9 +39,8 @@ export function WordList({
     return words.filter(
       (w) =>
         w.wort.toLowerCase().includes(q) ||
-        w.hochdeutsch.toLowerCase().includes(q) ||
-        w.beispielsatz?.toLowerCase().includes(q) ||
-        w.region?.toLowerCase().includes(q),
+        w.bedeutung.toLowerCase().includes(q) ||
+        w.added_by.toLowerCase().includes(q),
     );
   }, [words, query]);
 

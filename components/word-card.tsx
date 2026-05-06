@@ -5,7 +5,7 @@ import type { Word } from "@/lib/types";
 import { Button } from "@/components/ui/button";
 import { deleteWord } from "@/app/actions";
 import { EditWordDialog } from "@/components/edit-word-dialog";
-import { Pencil, Trash2, MapPin } from "lucide-react";
+import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
 import { formatRelative } from "@/lib/format";
 
@@ -31,37 +31,22 @@ export function WordCard({
   return (
     <article className="group relative rounded-xl border border-border/60 bg-card p-5 transition-all hover:border-border hover:shadow-sm">
       <div className="flex items-start justify-between gap-4">
-        <div className="min-w-0 flex-1 space-y-1.5">
+        <div className="min-w-0 flex-1 space-y-1">
           <div className="flex items-baseline gap-3 flex-wrap">
             <h3 className="text-lg font-semibold tracking-tight">
               {word.wort}
             </h3>
             <span className="text-sm text-muted-foreground">
-              {word.hochdeutsch}
+              {word.bedeutung}
             </span>
           </div>
 
-          {word.beispielsatz && (
-            <p className="text-sm italic text-muted-foreground">
-              „{word.beispielsatz}"
-            </p>
-          )}
-
-          <div className="flex items-center gap-3 pt-1.5 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 pt-1.5 text-xs text-muted-foreground">
             <span className="font-medium">{word.added_by}</span>
             <span aria-hidden>·</span>
             <time dateTime={word.created_at}>
               {formatRelative(word.created_at)}
             </time>
-            {word.region && (
-              <>
-                <span aria-hidden>·</span>
-                <span className="inline-flex items-center gap-1">
-                  <MapPin className="size-3" />
-                  {word.region}
-                </span>
-              </>
-            )}
           </div>
         </div>
 
