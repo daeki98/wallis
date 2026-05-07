@@ -14,7 +14,7 @@ type Mode = "login" | "register";
 export function LoginForm({ error }: { error?: string }) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("login");
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState(""); // E-Mail oder Name (Login) | E-Mail (Register)
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -28,16 +28,18 @@ export function LoginForm({ error }: { error?: string }) {
       const supabase = createClient();
 
       if (mode === "register") {
+        if (!identifier.includes("@")) {
+          setLocalError("Bei der Registrierung brauchen wir deine E-Mail.");
+          return;
+        }
         if (!name.trim()) {
           setLocalError("Bitte gib deinen Namen ein.");
           return;
         }
         const { error } = await supabase.auth.signUp({
-          email,
+          email: identifier,
           password,
-          options: {
-            data: { name: name.trim() },
-          },
+          options: { data: { name: name.trim() } },
         });
         if (error) {
           setLocalError(error.message);
@@ -48,15 +50,28 @@ export function LoginForm({ error }: { error?: string }) {
         return;
       }
 
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
+      // Login: erlaubt E-Mail ODER Name
+      let loginEmail = identifier;
+      if (!identifier.includes("@")) {
+        const { data, error } = await supabase.rpc("email_for_login", {
+          _input: identifier,
+        });
+        if (error || !data) {
+          setLocalError("Kein Account mit diesem Namen gefunden.");
+          return;
+        }
+        loginEmail = data;
+      }
+
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: loginEmail,
         password,
       });
-      if (error) {
+      if (signInError) {
         setLocalError(
-          error.message.toLowerCase().includes("invalid")
-            ? "Falsche E-Mail oder Passwort."
-            : error.message,
+          signInError.message.toLowerCase().includes("invalid")
+            ? "Falsches Passwort."
+            : signInError.message,
         );
         return;
       }
@@ -64,6 +79,11 @@ export function LoginForm({ error }: { error?: string }) {
       router.refresh();
     });
   };
+
+  const idLabel =
+    mode === "login" ? "E-Mail oder Name" : "E-Mail";
+  const idPlaceholder =
+    mode === "login" ? "du@example.com oder Pascal" : "du@example.com";
 
   return (
     <div className="space-y-4">
@@ -90,15 +110,15 @@ export function LoginForm({ error }: { error?: string }) {
 
       <form onSubmit={onSubmit} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="email">E-Mail</Label>
+          <Label htmlFor="identifier">{idLabel}</Label>
           <Input
-            id="email"
-            type="email"
-            autoComplete="email"
-            placeholder="du@example.com"
+            id="identifier"
+            type={mode === "register" ? "email" : "text"}
+            autoComplete={mode === "register" ? "email" : "username"}
+            placeholder={idPlaceholder}
             required
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={identifier}
+            onChange={(e) => setIdentifier(e.target.value)}
             disabled={isPending}
             autoFocus
           />

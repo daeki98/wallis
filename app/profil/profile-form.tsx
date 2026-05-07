@@ -8,8 +8,8 @@ import { Avatar } from "@/components/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Camera, Trash2 } from "lucide-react";
-import { setAvatar, updateProfile } from "@/app/actions";
+import { Loader2, Camera, LogOut, Trash2 } from "lucide-react";
+import { setAvatar, signOut, updateProfile } from "@/app/actions";
 import { toast } from "sonner";
 
 export function ProfileForm({
@@ -158,6 +158,19 @@ export function ProfileForm({
           Speichern
         </Button>
       </form>
+
+      <div className="border-t border-border pt-6">
+        <form action={signOut}>
+          <Button
+            type="submit"
+            variant="ghost"
+            className="gap-2 text-muted-foreground hover:text-destructive"
+          >
+            <LogOut className="size-4" />
+            Abmelden
+          </Button>
+        </form>
+      </div>
     </div>
   );
 }

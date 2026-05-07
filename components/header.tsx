@@ -2,18 +2,9 @@ import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar } from "@/components/avatar";
-import { signOut } from "@/app/actions";
-import { LogIn, LogOut, User } from "lucide-react";
+import { LogIn } from "lucide-react";
 
 export async function Header() {
   const supabase = await createClient();
@@ -28,7 +19,7 @@ export async function Header() {
       .from("profiles")
       .select("display_name, avatar_url")
       .eq("id", user.id)
-      .single();
+      .maybeSingle();
     profile =
       data ?? {
         display_name: user.email?.split("@")[0] ?? "Profil",
@@ -54,68 +45,20 @@ export async function Header() {
         <div className="flex items-center gap-1">
           <ThemeToggle />
           {user && profile ? (
-            <DropdownMenu>
-              <DropdownMenuTrigger
-                render={
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="gap-2 pl-1.5 pr-2"
-                  >
-                    <Avatar
-                      name={profile.display_name}
-                      src={profile.avatar_url}
-                      size={22}
-                    />
-                    <span className="hidden sm:inline">
-                      {profile.display_name}
-                    </span>
-                  </Button>
-                }
+            <Link
+              href="/profil"
+              className="group inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm transition-colors hover:bg-muted"
+              aria-label="Profil bearbeiten"
+            >
+              <Avatar
+                name={profile.display_name}
+                src={profile.avatar_url}
+                size={26}
               />
-              <DropdownMenuContent align="end" className="w-52">
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex items-center gap-2">
-                    <Avatar
-                      name={profile.display_name}
-                      src={profile.avatar_url}
-                      size={32}
-                    />
-                    <div className="flex min-w-0 flex-col">
-                      <span className="truncate text-sm font-medium">
-                        {profile.display_name}
-                      </span>
-                      <span className="truncate text-xs text-muted-foreground">
-                        {user.email}
-                      </span>
-                    </div>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  render={
-                    <Link href="/profil" className="cursor-pointer">
-                      <User className="size-4" />
-                      Profil
-                    </Link>
-                  }
-                />
-                <DropdownMenuSeparator />
-                <form action={signOut}>
-                  <DropdownMenuItem
-                    render={
-                      <button
-                        type="submit"
-                        className="w-full cursor-pointer"
-                      >
-                        <LogOut className="size-4" />
-                        Abmelden
-                      </button>
-                    }
-                  />
-                </form>
-              </DropdownMenuContent>
-            </DropdownMenu>
+              <span className="hidden sm:inline font-medium">
+                {profile.display_name}
+              </span>
+            </Link>
           ) : (
             <Button
               render={<Link href="/login" />}
