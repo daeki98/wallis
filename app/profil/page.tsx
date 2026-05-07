@@ -12,11 +12,33 @@ export default async function ProfilePage() {
   } = await supabase.auth.getUser();
   if (!user) redirect("/login?next=/profil");
 
-  const { data: profile } = await supabase
+  // Try to load existing profile (no error if missing)
+  let { data: profile } = await supabase
     .from("profiles")
     .select("*")
     .eq("id", user.id)
-    .single();
+    .maybeSingle();
+
+  // Bootstrap a profile if it doesn't exist yet (e.g. user was created
+  // before the auth trigger was in place, or trigger lagged)
+  if (!profile) {
+    const fallbackName =
+      (user.user_metadata?.name as string | undefined) ||
+      user.email?.split("@")[0] ||
+      "Profil";
+
+    const { data: created, error } = await supabase
+      .from("profiles")
+      .upsert({ id: user.id, display_name: fallbackName }, { onConflict: "id" })
+      .select("*")
+      .single();
+
+    if (error || !created) {
+      console.error("Failed to bootstrap profile:", error);
+      redirect("/?error=profile-bootstrap");
+    }
+    profile = created;
+  }
 
   return (
     <main className="mx-auto w-full max-w-md px-6 py-12 sm:py-16">
@@ -24,9 +46,7 @@ export default async function ProfilePage() {
         <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
           Profil
         </p>
-        <h1 className="text-3xl font-semibold tracking-tight">
-          Dein Profil
-        </h1>
+        <h1 className="text-3xl font-semibold tracking-tight">Dein Profil</h1>
         <p className="text-sm text-muted-foreground">
           Wie soll dein Name auf den Wörtern erscheinen?
         </p>
