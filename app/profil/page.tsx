@@ -1,4 +1,6 @@
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { ProfileForm } from "./profile-form";
 import type { Profile } from "@/lib/types";
@@ -42,6 +44,14 @@ export default async function ProfilePage() {
 
   return (
     <main className="mx-auto w-full max-w-md px-6 py-12 sm:py-16">
+      <Link
+        href="/"
+        className="mb-6 inline-flex items-center gap-1.5 text-sm text-muted-foreground transition-colors hover:text-foreground"
+      >
+        <ArrowLeft className="size-4" />
+        Zurück
+      </Link>
+
       <section className="mb-8 space-y-2">
         <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground">
           Profil

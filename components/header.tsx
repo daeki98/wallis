@@ -4,8 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar } from "@/components/avatar";
-import { BackButton } from "@/components/back-button";
-import { LogIn } from "lucide-react";
+import { LogIn, Trophy } from "lucide-react";
 
 export async function Header() {
   const supabase = await createClient();
@@ -31,11 +30,11 @@ export async function Header() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-6">
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <Link
             href="/"
             aria-label="Wallis — Startseite"
-            className="inline-flex items-center"
+            className="inline-flex items-center mr-2"
           >
             <Image
               src="/wappen.png"
@@ -46,7 +45,13 @@ export async function Header() {
               priority
             />
           </Link>
-          <BackButton />
+          <Link
+            href="/rangliste"
+            className="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+          >
+            <Trophy className="size-4" />
+            <span className="hidden sm:inline">Rangliste</span>
+          </Link>
         </div>
 
         <div className="flex items-center gap-1">

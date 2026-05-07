@@ -93,6 +93,13 @@ export async function updateProfile(formData: FormData) {
     .eq("id", user.id);
 
   if (error) return { error: error.message };
+
+  // Sync added_by auf alle bisherigen Wörter dieses Users
+  await supabase
+    .from("words")
+    .update({ added_by: displayName })
+    .eq("user_id", user.id);
+
   revalidatePath("/", "layout");
   return { success: true };
 }
