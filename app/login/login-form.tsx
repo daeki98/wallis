@@ -15,6 +15,7 @@ export function LoginForm({ error }: { error?: string }) {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("login");
   const [email, setEmail] = useState("");
+  const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -25,20 +26,40 @@ export function LoginForm({ error }: { error?: string }) {
     setLocalError(null);
     startTransition(async () => {
       const supabase = createClient();
-      const result =
-        mode === "register"
-          ? await supabase.auth.signUp({ email, password })
-          : await supabase.auth.signInWithPassword({ email, password });
 
-      if (result.error) {
-        setLocalError(
-          result.error.message.toLowerCase().includes("invalid")
-            ? "Falsche E-Mail oder Passwort."
-            : result.error.message,
-        );
+      if (mode === "register") {
+        if (!name.trim()) {
+          setLocalError("Bitte gib deinen Namen ein.");
+          return;
+        }
+        const { error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            data: { name: name.trim() },
+          },
+        });
+        if (error) {
+          setLocalError(error.message);
+          return;
+        }
+        router.replace("/");
+        router.refresh();
         return;
       }
 
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) {
+        setLocalError(
+          error.message.toLowerCase().includes("invalid")
+            ? "Falsche E-Mail oder Passwort."
+            : error.message,
+        );
+        return;
+      }
       router.replace("/");
       router.refresh();
     });
@@ -82,6 +103,22 @@ export function LoginForm({ error }: { error?: string }) {
             autoFocus
           />
         </div>
+
+        {mode === "register" && (
+          <div className="space-y-2">
+            <Label htmlFor="name">Name</Label>
+            <Input
+              id="name"
+              type="text"
+              autoComplete="name"
+              placeholder="Pascal"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              disabled={isPending}
+            />
+          </div>
+        )}
 
         <div className="space-y-2">
           <Label htmlFor="password">Passwort</Label>
