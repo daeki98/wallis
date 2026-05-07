@@ -3,6 +3,8 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 export function getAvatarUrl(path: string | null | undefined): string | null {
   if (!path) return null;
   if (path.startsWith("http")) return path;
+  // Lokale Assets aus public/ (z.B. /katze1.jpg) durchreichen
+  if (path.startsWith("/")) return path;
   return `${SUPABASE_URL}/storage/v1/object/public/avatars/${path}`;
 }
 

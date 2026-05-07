@@ -81,9 +81,8 @@ export function LoginForm({ error }: { error?: string }) {
   };
 
   const idLabel =
-    mode === "login" ? "E-Mail oder Name" : "E-Mail";
-  const idPlaceholder =
-    mode === "login" ? "du@example.com oder Pascal" : "du@example.com";
+    mode === "login" ? "E-Mail oder Username" : "E-Mail";
+  const idPlaceholder = mode === "login" ? "" : "";
 
   return (
     <div className="space-y-4">
@@ -126,12 +125,11 @@ export function LoginForm({ error }: { error?: string }) {
 
         {mode === "register" && (
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">Username</Label>
             <Input
               id="name"
               type="text"
-              autoComplete="name"
-              placeholder="Pascal"
+              autoComplete="username"
               required
               value={name}
               onChange={(e) => setName(e.target.value)}

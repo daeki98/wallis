@@ -48,7 +48,8 @@ export default async function ProfilePage() {
         </p>
         <h1 className="text-3xl font-semibold tracking-tight">Dein Profil</h1>
         <p className="text-sm text-muted-foreground">
-          Wie soll dein Name auf den Wörtern erscheinen?
+          Dein Username erscheint bei jedem Wort das du hinzufügst — Änderungen werden
+          rückwirkend übernommen.
         </p>
       </section>
 

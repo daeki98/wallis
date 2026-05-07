@@ -140,13 +140,12 @@ export function ProfileForm({
 
       <form onSubmit={onSaveName} className="space-y-4">
         <div className="space-y-2">
-          <Label htmlFor="display_name">Name</Label>
+          <Label htmlFor="display_name">Username</Label>
           <Input
             id="display_name"
             name="display_name"
             required
             defaultValue={profile.display_name}
-            placeholder="Pascal"
           />
         </div>
         <div className="space-y-2">

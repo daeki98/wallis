@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Avatar } from "@/components/avatar";
+import { BackButton } from "@/components/back-button";
 import { LogIn } from "lucide-react";
 
 export async function Header() {
@@ -30,17 +31,23 @@ export async function Header() {
   return (
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-6">
-        <Link href="/" className="group flex items-center gap-2">
-          <Image
-            src="/wappen.png"
-            alt="Walliser Wappen"
-            width={22}
-            height={22}
-            className="rounded-[3px] shadow-sm ring-1 ring-border/60"
-            priority
-          />
-          <span className="text-sm font-semibold tracking-tight">Wallis</span>
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/"
+            aria-label="Wallis — Startseite"
+            className="inline-flex items-center"
+          >
+            <Image
+              src="/wappen.png"
+              alt="Walliser Wappen"
+              width={26}
+              height={26}
+              className="rounded-[3px] shadow-sm ring-1 ring-border/60"
+              priority
+            />
+          </Link>
+          <BackButton />
+        </div>
 
         <div className="flex items-center gap-1">
           <ThemeToggle />
