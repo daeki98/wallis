@@ -8,8 +8,8 @@ import { Avatar } from "@/components/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Loader2, Camera, LogOut, Trash2 } from "lucide-react";
-import { setAvatar, signOut, updateProfile } from "@/app/actions";
+import { Loader2, Camera, LogOut, Shuffle, Trash2 } from "lucide-react";
+import { rerollAvatar, setAvatar, signOut, updateProfile } from "@/app/actions";
 import { toast } from "sonner";
 
 export function ProfileForm({
@@ -25,6 +25,7 @@ export function ProfileForm({
   const [uploading, setUploading] = useState(false);
   const [savingName, startSavingName] = useTransition();
   const [removing, startRemoving] = useTransition();
+  const [rerolling, startRerolling] = useTransition();
 
   const onUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -62,6 +63,19 @@ export function ProfileForm({
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = "";
     }
+  };
+
+  const onReroll = () => {
+    startRerolling(async () => {
+      const result = await rerollAvatar();
+      if (result.error) {
+        toast.error(result.error);
+        return;
+      }
+      if (result.avatar) setAvatarUrl(result.avatar);
+      toast.success("Neue Katze eingezogen 🐱");
+      router.refresh();
+    });
   };
 
   const onRemove = () => {
@@ -109,32 +123,48 @@ export function ProfileForm({
             onChange={onUpload}
             disabled={uploading}
           />
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={uploading}
-            className="gap-2"
-          >
-            {uploading ? (
-              <Loader2 className="size-4 animate-spin" />
-            ) : (
-              <Camera className="size-4" />
-            )}
-            {avatarUrl ? "Bild ändern" : "Bild hochladen"}
-          </Button>
-          {avatarUrl && (
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={uploading}
+              className="gap-2"
+            >
+              {uploading ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Camera className="size-4" />
+              )}
+              {avatarUrl ? "Bild ändern" : "Bild hochladen"}
+            </Button>
             <Button
               variant="ghost"
               size="sm"
-              onClick={onRemove}
-              disabled={removing}
-              className="ml-1 gap-2 text-muted-foreground"
+              onClick={onReroll}
+              disabled={rerolling}
+              className="gap-2 text-muted-foreground hover:text-foreground"
             >
-              <Trash2 className="size-3.5" />
-              Entfernen
+              {rerolling ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <Shuffle className="size-4" />
+              )}
+              Andere Katze
             </Button>
-          )}
+            {avatarUrl && (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={onRemove}
+                disabled={removing}
+                className="gap-2 text-muted-foreground hover:text-destructive"
+              >
+                <Trash2 className="size-3.5" />
+                Entfernen
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 

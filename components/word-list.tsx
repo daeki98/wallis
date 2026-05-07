@@ -7,6 +7,14 @@ import { Input } from "@/components/ui/input";
 import { WordCard } from "@/components/word-card";
 import { Search } from "lucide-react";
 
+// Lowercase + Umlaute normalisieren ("äpfu" → "apfu")
+function normalize(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "");
+}
+
 export function WordList({
   words,
   canEdit,
@@ -34,14 +42,16 @@ export function WordList({
   }, [query]);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return words;
-    return words.filter(
-      (w) =>
-        w.wort.toLowerCase().includes(q) ||
-        w.bedeutung.toLowerCase().includes(q) ||
-        w.added_by.toLowerCase().includes(q),
-    );
+    const terms = normalize(query).split(/\s+/).filter(Boolean);
+    if (terms.length === 0) return words;
+
+    return words.filter((w) => {
+      const haystack = normalize(
+        `${w.wort} ${w.bedeutung} ${w.added_by}`,
+      );
+      // AND über alle Such-Begriffe (jedes muss irgendwo matchen)
+      return terms.every((t) => haystack.includes(t));
+    });
   }, [words, query]);
 
   return (
@@ -56,6 +66,13 @@ export function WordList({
           className="h-11 pl-10"
         />
       </div>
+
+      {query.trim() && filtered.length > 0 && filtered.length !== words.length && (
+        <p className="text-xs text-muted-foreground">
+          {filtered.length}{" "}
+          {filtered.length === 1 ? "Treffer" : "Treffer"} für „{query.trim()}"
+        </p>
+      )}
 
       {filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center rounded-xl border border-dashed border-border py-16 text-center">

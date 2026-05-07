@@ -104,6 +104,42 @@ export async function updateProfile(formData: FormData) {
   return { success: true };
 }
 
+const KATZEN = [
+  "/katzen/katze1.jpg",
+  "/katzen/katze2.jpg",
+  "/katzen/katze3.jpg",
+  "/katzen/katze4.jpg",
+  "/katzen/katze5.jpg",
+  "/katzen/katze6.jpg",
+];
+
+export async function rerollAvatar() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Du musst eingeloggt sein." };
+
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("avatar_url")
+    .eq("id", user.id)
+    .maybeSingle();
+
+  // Pick aus den anderen Katzen — garantiert nicht dieselbe wie jetzt
+  const pool = KATZEN.filter((p) => p !== profile?.avatar_url);
+  const next = pool[Math.floor(Math.random() * pool.length)];
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ avatar_url: next })
+    .eq("id", user.id);
+
+  if (error) return { error: error.message };
+  revalidatePath("/", "layout");
+  return { success: true, avatar: next };
+}
+
 export async function setAvatar(avatarPath: string | null) {
   const supabase = await createClient();
   const {
