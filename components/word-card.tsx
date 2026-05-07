@@ -7,7 +7,7 @@ import { deleteWord } from "@/app/actions";
 import { EditWordDialog } from "@/components/edit-word-dialog";
 import { Pencil, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { formatRelative } from "@/lib/format";
+import { RelativeTime } from "@/components/relative-time";
 
 export function WordCard({
   word,
@@ -44,9 +44,7 @@ export function WordCard({
           <div className="flex items-center gap-2 pt-1.5 text-xs text-muted-foreground">
             <span className="font-medium">{word.added_by}</span>
             <span aria-hidden>·</span>
-            <time dateTime={word.created_at}>
-              {formatRelative(word.created_at)}
-            </time>
+            <RelativeTime iso={word.created_at} />
           </div>
         </div>
 
