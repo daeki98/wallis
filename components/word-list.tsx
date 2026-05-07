@@ -17,10 +17,10 @@ function normalize(s: string): string {
 
 export function WordList({
   words,
-  canEdit,
+  userId,
 }: {
   words: Word[];
-  canEdit: boolean;
+  userId: string | null;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -86,7 +86,10 @@ export function WordList({
         <ul className="space-y-3">
           {filtered.map((word) => (
             <li key={word.id}>
-              <WordCard word={word} canEdit={canEdit} />
+              <WordCard
+                word={word}
+                canEdit={!!userId && word.user_id === userId}
+              />
             </li>
           ))}
         </ul>

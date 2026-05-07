@@ -15,7 +15,7 @@ export default async function Home() {
     supabase.auth.getUser(),
   ]);
 
-  const isLoggedIn = !!userResult.data.user;
+  const userId = userResult.data.user?.id ?? null;
   const list = (words ?? []) as Word[];
 
   return (
@@ -34,13 +34,13 @@ export default async function Home() {
         </p>
       </section>
 
-      {isLoggedIn && (
+      {userId && (
         <div className="mb-6 flex justify-end">
           <AddWordDialog />
         </div>
       )}
 
-      <WordList words={list} canEdit={isLoggedIn} />
+      <WordList words={list} userId={userId} />
     </main>
   );
 }
