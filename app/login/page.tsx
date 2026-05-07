@@ -5,7 +5,7 @@ import { LoginForm } from "./login-form";
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; sent?: string }>;
+  searchParams: Promise<{ error?: string }>;
 }) {
   const params = await searchParams;
 
@@ -21,18 +21,10 @@ export default async function LoginPage({
 
       <div className="w-full max-w-sm space-y-8">
         <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Admin-Login
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            Nur für Soraya und Pascal. Magic-Link per E-Mail.
-          </p>
+          <h1 className="text-2xl font-semibold tracking-tight">Login</h1>
         </div>
 
-        <LoginForm
-          error={params.error}
-          sent={params.sent === "1"}
-        />
+        <LoginForm error={params.error} />
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { Button } from "@/components/ui/button";
@@ -39,7 +40,14 @@ export async function Header() {
     <header className="sticky top-0 z-40 w-full border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-6">
         <Link href="/" className="group flex items-center gap-2">
-          <div className="size-6 rounded-md bg-gradient-to-br from-red-600 via-red-500 to-red-700 ring-1 ring-red-700/30" />
+          <Image
+            src="/wappen.png"
+            alt="Walliser Wappen"
+            width={22}
+            height={22}
+            className="rounded-[3px] shadow-sm ring-1 ring-border/60"
+            priority
+          />
           <span className="text-sm font-semibold tracking-tight">Wallis</span>
         </Link>
 
@@ -111,6 +119,7 @@ export async function Header() {
           ) : (
             <Button
               render={<Link href="/login" />}
+              nativeButton={false}
               variant="ghost"
               size="sm"
               className="gap-2"
