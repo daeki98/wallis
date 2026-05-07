@@ -1,122 +1,177 @@
-# Wallis
+# Supabase CLI
 
-Walliser Wörter, Tradition, Rezepte. Eine wachsende Sammlung, gepflegt von Soraya und Pascal.
+[![Coverage Status](https://coveralls.io/repos/github/supabase/cli/badge.svg?branch=develop)](https://coveralls.io/github/supabase/cli?branch=develop) [![Bitbucket Pipelines](https://img.shields.io/bitbucket/pipelines/supabase-cli/setup-cli/master?style=flat-square&label=Bitbucket%20Canary)](https://bitbucket.org/supabase-cli/setup-cli/pipelines) [![Gitlab Pipeline Status](https://img.shields.io/gitlab/pipeline-status/sweatybridge%2Fsetup-cli?label=Gitlab%20Canary)
+](https://gitlab.com/sweatybridge/setup-cli/-/pipelines)
 
-**Stack:** Next.js 16 · React 19 · TypeScript · Tailwind v4 · shadcn/ui · Supabase (DB + Auth + Storage) · Vercel
+[Supabase](https://supabase.io) is an open source Firebase alternative. We're building the features of Firebase using enterprise-grade open source tools.
 
-## Features
+This repository contains all the functionality for Supabase CLI.
 
-- Öffentliche Wortliste mit Live-Suche (URL-persistent: Refresh behält den Filter)
-- Magic-Link Login (kein Passwort)
-- Persistente Profile mit Profilbild (Supabase Storage)
-- Add/Edit/Delete von Wörtern für eingeloggte Admins
-- Dark/Light Theme · Mobile-first
+- [x] Running Supabase locally
+- [x] Managing database migrations
+- [x] Creating and deploying Supabase Functions
+- [x] Generating types directly from your database schema
+- [x] Making authenticated HTTP requests to [Management API](https://supabase.com/docs/reference/api/introduction)
 
-## Setup
+## Getting started
 
-### 1. Supabase
+### Install the CLI
 
-Einmalig:
-
-1. **DB-Migration anwenden** — entweder über die CLI (siehe unten) oder den Inhalt von `supabase/migrations/20260506190000_init_schema.sql` einmal im **SQL Editor** ausführen.
-2. **Authentication → Providers → Email**: Magic Link aktivieren.
-3. **Authentication → URL Configuration**:
-   - **Site URL**: `https://<deine-vercel-url>` (z.B. `https://wallis.vercel.app`)
-   - **Redirect URLs**: füg `http://localhost:3000/auth/callback` und `https://<deine-vercel-url>/auth/callback` hinzu.
-4. **Authentication → Users → Add user** für Soraya und Pascal mit jeweiliger E-Mail. Beim ersten Login bekommt jede(r) einen Magic-Link.
-
-### 2. Lokal
+Available via [NPM](https://www.npmjs.com) as dev dependency. To install:
 
 ```bash
-npm install
-npm run dev      # http://localhost:3000
+npm i supabase --save-dev
 ```
 
-`.env.local` ist bereits gesetzt. Für andere Maschinen siehe `.env.example`.
+When installing with yarn 4, you need to disable experimental fetch with the following nodejs config.
 
-### 3. Vercel
+```
+NODE_OPTIONS=--no-experimental-fetch yarn add supabase
+```
 
-- Repo `daeki98/wallis` mit Vercel verbinden.
-- In **Vercel → Settings → Environment Variables** dieselben Vars wie in `.env.local` eintragen:
-  - `NEXT_PUBLIC_SUPABASE_URL`
-  - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
-- Deploy. Vercel baut bei jedem `git push` neu.
+> **Note**
+For Bun versions below v1.0.17, you must add `supabase` as a [trusted dependency](https://bun.sh/guides/install/trusted) before running `bun add -D supabase`.
 
-## Datenbank-Workflow (versionskontrollierte Migrations)
+<details>
+  <summary><b>macOS</b></summary>
 
-Die DB-Schema-Änderungen liegen als SQL-Migrations in `supabase/migrations/`. Damit ist jede Änderung committbar und reproduzierbar.
+  Available via [Homebrew](https://brew.sh). To install:
 
-### Einmalige Einrichtung
+  ```sh
+  brew install supabase/tap/supabase
+  ```
+
+  To install the beta release channel:
+  
+  ```sh
+  brew install supabase/tap/supabase-beta
+  brew link --overwrite supabase-beta
+  ```
+  
+  To upgrade:
+
+  ```sh
+  brew upgrade supabase
+  ```
+</details>
+
+<details>
+  <summary><b>Windows</b></summary>
+
+  Available via [Scoop](https://scoop.sh). To install:
+
+  ```powershell
+  scoop bucket add supabase https://github.com/supabase/scoop-bucket.git
+  scoop install supabase
+  ```
+
+  To upgrade:
+
+  ```powershell
+  scoop update supabase
+  ```
+</details>
+
+<details>
+  <summary><b>Linux</b></summary>
+
+  Available via [Homebrew](https://brew.sh) and Linux packages.
+
+  #### via Homebrew
+
+  To install:
+
+  ```sh
+  brew install supabase/tap/supabase
+  ```
+
+  To upgrade:
+
+  ```sh
+  brew upgrade supabase
+  ```
+
+  #### via Linux packages
+
+  Linux packages are provided in [Releases](https://github.com/supabase/cli/releases). To install, download the `.apk`/`.deb`/`.rpm`/`.pkg.tar.zst` file depending on your package manager and run the respective commands.
+
+  ```sh
+  sudo apk add --allow-untrusted <...>.apk
+  ```
+
+  ```sh
+  sudo dpkg -i <...>.deb
+  ```
+
+  ```sh
+  sudo rpm -i <...>.rpm
+  ```
+
+  ```sh
+  sudo pacman -U <...>.pkg.tar.zst
+  ```
+</details>
+
+<details>
+  <summary><b>Other Platforms</b></summary>
+
+  You can also install the CLI via [go modules](https://go.dev/ref/mod#go-install) without the help of package managers.
+
+  ```sh
+  go install github.com/supabase/cli@latest
+  ```
+
+  Add a symlink to the binary in `$PATH` for easier access:
+
+  ```sh
+  ln -s "$(go env GOPATH)/bin/cli" /usr/bin/supabase
+  ```
+
+  This works on other non-standard Linux distros.
+</details>
+
+<details>
+  <summary><b>Community Maintained Packages</b></summary>
+
+  Available via [pkgx](https://pkgx.sh/). Package script [here](https://github.com/pkgxdev/pantry/blob/main/projects/supabase.com/cli/package.yml).
+  To install in your working directory:
+
+  ```bash
+  pkgx install supabase
+  ```
+
+  Available via [Nixpkgs](https://nixos.org/). Package script [here](https://github.com/NixOS/nixpkgs/blob/master/pkgs/development/tools/supabase-cli/default.nix).
+</details>
+
+### Run the CLI
 
 ```bash
-npx supabase login          # öffnet Browser zur Auth
-npm run db:link             # linkt zum Projekt dkypxhiwbiptlguviyeq
+supabase bootstrap
 ```
 
-Dabei wird das DB-Passwort einmal abgefragt (du findest es in Supabase → Project Settings → Database).
-
-### Schema ändern
-
-Variante A — Migration manuell schreiben:
+Or using npx:
 
 ```bash
-# Neue Migration anlegen
-npx supabase migration new add_xyz
-# → erzeugt supabase/migrations/<timestamp>_add_xyz.sql
-# Datei editieren, dann:
-npm run db:push
+npx supabase bootstrap
 ```
 
-Variante B — DB-Diff vom Remote ziehen (z.B. wenn du im Studio etwas geändert hast):
+The bootstrap command will guide you through the process of setting up a Supabase project using one of the [starter](https://github.com/supabase-community/supabase-samples/blob/main/samples.json) templates.
 
-```bash
-npm run db:diff -- name_for_migration   # erstellt Migration aus den Änderungen
-npm run db:push                         # wendet sie an
+## Docs
+
+Command & config reference can be found [here](https://supabase.com/docs/reference/cli/about).
+
+## Breaking changes
+
+We follow semantic versioning for changes that directly impact CLI commands, flags, and configurations.
+
+However, due to dependencies on other service images, we cannot guarantee that schema migrations, seed.sql, and generated types will always work for the same CLI major version. If you need such guarantees, we encourage you to pin a specific version of CLI in package.json.
+
+## Developing
+
+To run from source:
+
+```sh
+# Go >= 1.22
+go run . help
 ```
-
-### TypeScript-Typen aus DB generieren
-
-```bash
-npm run db:types        # → lib/database.types.ts
-```
-
-## Struktur
-
-```
-app/
-  page.tsx              Wortliste mit Live-Suche (URL-Param ?q=)
-  login/                Magic-Link-Login
-  profil/               Profilseite (Avatar-Upload, Name)
-  auth/callback/        Magic-Link Redirect-Handler
-  actions.ts            Server Actions (add/update/delete word, profile)
-components/
-  word-list.tsx         Liste mit URL-persistenter Suche
-  word-card.tsx         Wort-Card + Edit/Delete on hover
-  add-word-dialog.tsx   Wort hinzufügen
-  edit-word-dialog.tsx  Wort bearbeiten
-  header.tsx            Sticky Header mit Avatar, Theme, Profil-Link
-  avatar.tsx            Avatar-Komponente (Storage-Url-Helper)
-  ui/                   shadcn/ui-Komponenten
-lib/
-  supabase/             Browser-, Server-, Proxy-Clients
-  types.ts              `Word`, `Profile`
-  format.ts             Relative Zeit (de-CH)
-proxy.ts                Session-Refresh (Next.js 16 Middleware)
-supabase/
-  config.toml           Supabase-CLI-Config
-  migrations/           Versionierte SQL-Migrations
-```
-
-## Sicherheit
-
-- Alle dürfen Wörter und Profile **lesen** (öffentlich).
-- Nur **eingeloggte User** dürfen Wörter schreiben/ändern/löschen.
-- Profile: jeder kann nur **sein eigenes** ändern.
-- Avatare im `avatars`-Storage-Bucket, organisiert nach `user_id/avatar-*.ext`. Nur der eigene Owner darf hochladen/löschen.
-- Der `sb_publishable_*` Key ist öffentlich-safe — Schutz kommt aus den RLS-Policies in der DB.
-
-## Roadmap
-
-- [x] Walliser Wörter
-- [ ] Walliser Rezepte (geplant: separate Route `app/rezepte/` + eigene Tabelle)
-- [ ] Weitere traditionelle Inhalte
